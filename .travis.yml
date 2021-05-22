@@ -1,0 +1,23 @@
+sudo: required
+services: 
+  - docker
+language: generic
+
+before_install:
+  - docker build -t daniel614/react-test -f ./client/Dockerfile.dev ./client
+
+script:
+  - docker run -e CI=true daniel614/react-test npm test
+
+after_success:
+  - docker build -t daniel614/multi-client ./client
+  - docker build -t daniel614/multi-nginx ./nginx
+  - docker build -t daniel614/multi-server ./server
+  - docker build -t daniel614/multi-worker ./worker
+  # login to docker cli
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
+  # push images to docker hub
+  - docker push daniel614/multi-client
+  - docker push daniel614/multi-nginx
+  - docker push daniel614/multi-server
+  - docker push daniel614/multi-worker
