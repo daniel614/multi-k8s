@@ -18,7 +18,7 @@ const pgClient = new Pool({
   database: keys.pgDatabase,
   password: keys.pgPassword,
   port: keys.pgPort
-})
+});
 
 pgClient.on("connect", (client) => {
   client
@@ -31,7 +31,7 @@ const redis = require('redis');
 const redisClient = redis.createClient({
   host: keys.redisHost,
   port: keys.redisPort,
-  retry_strategy: () =>  1000
+  retry_strategy: () => 1000
 });
 const redisPublisher = redisClient.duplicate();
 
@@ -53,7 +53,7 @@ app.get('/values/current', async (req, res) => {
 });
 
 app.post('/values', async (req, res) => {
-  const index = req.body.value;
+  const index = req.body.index;
 
   if (parseInt(index) > 40) {
     return res.status(422).send('Index too high');
